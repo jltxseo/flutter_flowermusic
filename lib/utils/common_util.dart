@@ -40,7 +40,7 @@ class CommonUtil {
   // 处理图片
   static Future<FormData> clickIcon(int count) async {
     FormData formData;
-    List<UploadFileInfo> files = [];
+    List<Future<MultipartFile>> files = [];
     try {
       List<Asset> resultList = await MultiImagePicker.pickImages(
           maxImages: count,
@@ -65,10 +65,13 @@ class CommonUtil {
           File imageFile = new File('${path}originalImage_$uuid.png')
             ..writeAsBytesSync(imageData);
           print(imageFile.path);
-          var file = new UploadFileInfo(imageFile, '${path}originalImage_$uuid.png', contentType: ContentType.parse("image/png"));
+          // UploadFileInfo(File(path), name,)修改为MultipartFile.fromFile(path, filename: name)
+          // var file = MultipartFile.fromFile(imageFile.path, filename: '${path}originalImage_$uuid.png', contentType: MediaType("image/png"));
+          var file = MultipartFile.fromFile(imageFile.path, filename: '${path}originalImage_$uuid.png');
           files.add(file);
-        };
-        FormData formData = new FormData.from({
+        }
+        // FormData.from修改为FormData.fromMap
+        FormData formData =  FormData.fromMap({
           'file': files
         });
         return formData;
